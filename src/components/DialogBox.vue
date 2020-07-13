@@ -20,7 +20,7 @@ const timeInterval = 100;
 
 export default {
   name: 'DialogBox',
-  props: ['dialogId', 'backgroundImg'],
+  props: ['dialogId', 'backgroundImg', 'firstKeyBrowse'],
   data() {
     return {
       items: [],
@@ -29,20 +29,20 @@ export default {
       },
       text: {
         firstKey: {
-          contents: ['获得了物品：第一把钥匙', '哇！这么快就找到第一把钥匙啦！', '我这里有一个很重要的信息，你听好了哦！', '奥秘官奥秘官奥秘官奥秘官奥秘官···'],
-          loop: 'end',
+          contents: ['获得了物品：第一把钥匙', '哇，这么快就找到第一把钥匙啦！你好厉害！', '我这里有一个很重要的信息要告诉你，听好了哦！', '奥秘官奥秘官奥秘官奥秘官奥秘官···'],
+          loop: 'tow-three',
         },
         secondKeyDialog: {
-          contents: ['获得了物品：第二把钥匙', '想不到这都能被你找到，你真是太厉害啦！', '我还有一个重要的事情要告诉你：', '网首页网首页网首页网首页网首页···'],
-          loop: 'order',
+          contents: ['获得了物品：第二把钥匙', '想不到这都被你发现了，你好厉害！', '我这里有一个很重要的信息要告诉你，要记住哦！', '网首页网首页网首页网首页网首页···'],
+          loop: 'tow-three',
         },
         puzzle: {
-          contents: ['就在灰色的道路上！', '偶尔回头看一看。', '第三把钥匙只有他才知道在哪里。', '能走到这里真是不容易！'],
-          loop: 'random',
+          contents: ['能找到这里真是不容易！你太棒了！', '第三把钥匙的线索就藏在来时的灰色道路旁', '找到那个掌握线索的人吧！'],
+          loop: 'tow-three',
         },
         thirdKey: {
-          contents: ['获得了物品：第三把钥匙', '接下来，钥匙要用在哪里呢？', '还有最后一句重要的话要告诉你：', 'F12F12F12F12F12F12F12·····'],
-          loop: 'order',
+          contents: ['获得了物品：第三把钥匙', '你太厉害了！赢得了第三把钥匙！', '不过，光集齐钥匙是不够的，你还得找到能使用它们的地方。', '我这里也有重要的消息要告诉你，记住了哦！', 'F12F12F12F12F12···'],
+          loop: 'three-four',
         },
       },
       process: -1,
@@ -70,6 +70,7 @@ export default {
         this.playDialogOfFirstKey();
         break;
       case 'secondKeyDialog':
+        if (this.firstKeyBrowse === 'UnBrowse') this.text.secondKeyDialog.contents = ['想不到这都被你发现了，你好厉害！', '我这里有一个很重要的信息要告诉你，要记住哦！', '网首页网首页网首页网首页网首页···'];
         this.playDialogOfSecondKey();
         break;
       case 'puzzle':
@@ -88,6 +89,7 @@ export default {
     },
     playDialogOfFirstKey() {
       if (this.process !== this.contents.length - 1) this.process += 1;
+      else this.process = 2;
       if (this.intervaler) clearInterval(this.intervaler);
       this.i = 0;
       this.items = [];
@@ -97,8 +99,11 @@ export default {
       }, timeInterval);
     },
     playDialogOfSecondKey() {
-      if (this.process === this.contents.length - 1) this.process = 1;
-      else this.process += 1;
+      if (this.process !== this.contents.length - 1) this.process += 1;
+      else {
+        // eslint-disable-next-line no-unused-expressions
+        this.firstKeyBrowse === 'UnBrowse' ? this.process = 1 : this.process = 2;
+      }
       if (this.intervaler) clearInterval(this.intervaler);
       this.i = 0;
       this.items = [];
@@ -108,7 +113,8 @@ export default {
       }, timeInterval);
     },
     playDialogOfPuzzle() {
-      this.process = Math.floor(Math.random() * 4);
+      if (this.process !== this.contents.length - 1) this.process += 1;
+      else this.process = 1;
       if (this.intervaler) clearInterval(this.intervaler);
       this.i = 0;
       this.items = [];
@@ -118,8 +124,8 @@ export default {
       }, timeInterval);
     },
     playDialogOfThirdKey() {
-      if (this.process === this.contents.length - 1) this.process = 1;
-      else this.process += 1;
+      if (this.process !== this.contents.length - 1) this.process += 1;
+      else this.process = 3;
       if (this.intervaler) clearInterval(this.intervaler);
       this.i = 0;
       this.items = [];

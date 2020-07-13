@@ -5,7 +5,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-  publicPath: '/website/activity/twokeys',
+  publicPath: 'https://resource.itaotuo.com/website/activity/twokeys',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',

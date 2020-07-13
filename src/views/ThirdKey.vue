@@ -1,8 +1,8 @@
 <template>
   <div id="thirdKey">
     <key-bar ref="keyBar" class="key-bar" key-cabinet="thirdKey"></key-bar>
-    <img class="shilaimu" :style="{opacity:shilaimuOpacity}" src="@/assets/secondKey/lan-shang.gif">
-    <img class="shadow" :style="{opacity:shilaimuOpacity}" src="@/assets/secondKey/shadow.png">
+    <img class="shilaimu" :style="{opacity:shilaimuOpacity}" src="@/assets/thirdKey/huang-you.gif">
+    <img class="shadow" :style="{opacity:shilaimuOpacity}" src="@/assets/thirdKey/shadow.png">
     <dialog-box ref="thirdKeyDialog" class="dialog" dialog-id="thirdKey" @touchstart.native="playDialogOfThirdKey"></dialog-box>
   </div>
 </template>
@@ -18,10 +18,13 @@ export default {
     return {
       shilaimuOpacity: 0,
       thirdKeyBarInit: false,
+      thirdKeyBarshilaimu: false,
     };
   },
   methods: {
-    // 点击对话框
+    /**
+     * 点击对话框
+     */
     playDialogOfThirdKey() {
       if (!this.thirdKeyBarInit) {
         this.thirdKeyBarInit = !this.thirdKeyBarInit;
@@ -29,8 +32,14 @@ export default {
         setTimeout(() => {
           this.shilaimuOpacity = 1;
         }, 1000);
+        setTimeout(() => {
+          this.$refs.thirdKeyDialog.playDialogOfThirdKey();
+          this.thirdKeyBarshilaimu = !this.thirdKeyBarshilaimu;
+        }, 2000);
+      } else {
+        if (!this.thirdKeyBarshilaimu) return;
+        this.$refs.thirdKeyDialog.playDialogOfThirdKey();
       }
-      this.$refs.thirdKeyDialog.playDialogOfThirdKey();
     },
   },
 };

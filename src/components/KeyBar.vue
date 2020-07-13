@@ -20,7 +20,7 @@ import alertImg from '@/assets/keyBar/alert.png';
 
 export default {
   name: 'KeyBar',
-  props: ['keyCabinet'],
+  props: ['keyCabinet', 'firstKeyBrowse'],
   data() {
     return {
       alert: {
@@ -43,7 +43,8 @@ export default {
         this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }];
         break;
       case 'secondKey':
-        this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }, { keyName: 'secondKey', img: secondKey, content: '第二把钥匙' }];
+        if (this.firstKeyBrowse === 'Browsed') this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }, { keyName: 'secondKey', img: secondKey, content: '第二把钥匙' }];
+        else this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }];
         break;
       case 'thirdKey':
         this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }, { keyName: 'secondKey', img: secondKey, content: '第一把钥匙' }, { keyName: 'thirdKey', img: thirdKey, content: '第三把钥匙' }];
@@ -79,7 +80,7 @@ export default {
 }
 .firstKey, .secondKey, .thirdKey {
   position: absolute;
-  width: 4.7vw;
+  width: 6.3vw;
   height: 14.7vw;
   top: 4vh;
   transition: all 1s linear;

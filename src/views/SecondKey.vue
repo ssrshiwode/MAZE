@@ -9,19 +9,19 @@
       <div class="left" v-show="puzzleShow" @touchstart="crackPuzzle('left')" />
       <div class="right" v-show="puzzleShow" @touchstart="crackPuzzle('right')" />
     </div>
-    <div class="ceil white" :style="ceilStyle">
-      <span class="left">匙钥把一后最索线键关的</span>
-      <span class="right">呀住持坚续继方前在利胜</span>
+    <div class="ceil white" :style="ceilAisleStyle">
+      <div class="left">索线键关的匙钥的<span></span></div>
+      <div class="right">方前在利胜住持坚<span></span></div>
     </div>
-    <div class="ceil gary" :style="ceilStyle">
-      <span class="left">握掌家玩号零</span>
-      <span class="right">啦现发你呀诶</span>
+    <div class="ceil gary" :style="ceilAisleStyle">
+      <div class="left">后最握掌家玩号零<span></span></div>
+      <div class="right">定一力努续继错不<span></span></div>
     </div>
     <div class="ceil start" :style="ceilStyle">
-      <key-bar ref="keyBar" class="key-bar" key-cabinet="secondKey"></key-bar>
+      <key-bar ref="keyBar" class="key-bar" key-cabinet="secondKey" :first-key-browse="firstKeyBrowse"></key-bar>
       <img class="shilaimu" :style="{opacity:shilaimuOpacity}" src="@/assets/secondKey/lan-shang.gif">
       <img class="shadow" :style="{opacity:shilaimuOpacity}" src="@/assets/secondKey/shadow.png">
-      <dialog-box ref="secondKeyDialog" class="dialog" dialog-id="secondKeyDialog" @touchstart.native="playDialogOfSecondKey"></dialog-box>
+      <dialog-box ref="secondKeyDialog" class="dialog" dialog-id="secondKeyDialog" :first-key-browse="firstKeyBrowse" @touchstart.native="playDialogOfSecondKey"></dialog-box>
     </div>
     <template v-for="(img, index) in preloadImgs">
       <img :src="img" v-show="false" :key="index">
@@ -75,11 +75,13 @@ export default {
       returnStartAnimateHandle: null,
       shilaimuOpacity: 0,
       secondKeyBarInit: false,
+      secondKeyBarshilaimu: false,
       refs: this.$refs,
       preloadImgs: [mazeBackground, mazeBaolie, mazeChuchang, mazeDaiji],
       slipDownLock: false, // 页面下移锁
       slidUpLock: true, // 页面上移锁
-      swipeLock: false, // 页面滑动锁
+      swipeLock: false, // 页面滑动锁,
+      firstKeyBrowse: '',
     };
   },
   created() {
@@ -93,17 +95,24 @@ export default {
      * 初始化参数
      */
     init() {
+      document.domain = 'omescape.net';
+      // eslint-disable-next-line no-unused-expressions
+      document.cookie.includes('keyone_history=Browsed') ? this.firstKeyBrowse = 'Browsed' : this.firstKeyBrowse = 'UnBrowse';
       this.clientWidth = window.screen.width;
       this.clientHeight = window.screen.height;
-      this.total = -this.clientHeight * 3;
+      this.total = -this.clientHeight * 2.4;
       this.secondKeyStyle = {
         width: `${this.clientWidth}px`,
-        height: `${this.clientHeight * 4}px`,
+        height: `${this.clientHeight * 3.4}px`,
         transform: `translateY(${this.total}px)`,
       };
       this.ceilStyle = {
         width: `${this.clientWidth}px`,
         height: `${this.clientHeight}px`,
+      };
+      this.ceilAisleStyle = {
+        width: `${this.clientWidth}px`,
+        height: `${this.clientHeight * 0.7}px`,
       };
     },
     /**
@@ -132,21 +141,23 @@ export default {
           if (this.total >= 0) { // 顶部对齐
             this.total = 0;
             this.animeTransltaeY();
+            this.slipDownLock = true;
             return;
           }
           this.isNeedToTopAnime();
           const interval = this.swipResistance(currentY - this.fingerOne);
           this.total += interval;
           this.animeTransltaeY();
-          this.fingerOne = currentY; // 记录当前手指的位置
+          // this.fingerOne = currentY; // 记录当前手指的位置
         }
         if (currentY < this.fingerOne && this.slipDownLock) { // 手指向上滑动,页面向下移动
           this.isNeedToBottom();
           const interval = currentY - this.fingerOne;
           this.total += interval;
           this.animeTransltaeY();
-          this.fingerOne = currentY; // 记录当前手指的位置
+          // this.fingerOne = currentY; // 记录当前手指的位置
         }
+        this.fingerOne = currentY; // 记录当前手指的位置
       } else { // 双指手操作（多指算双指）
         const currentY = event.touches[0].pageY;
         const sCurrentY = event.touches[1].pageY;
@@ -161,17 +172,19 @@ export default {
           interval = this.swipResistance(interval);
           this.total += interval;
           this.animeTransltaeY();
-          this.fingerOne = currentY; // 记录当前手指的位置
-          this.fingerTwo = sCurrentY;
+          /* this.fingerOne = currentY; // 记录当前手指的位置
+          this.fingerTwo = sCurrentY; */
         }
         if (interval < 0 && this.slipDownLock) { // 手指上滑
           this.isNeedToBottom();
           interval = currentY - this.fingerOne;
           this.total += interval;
           this.animeTransltaeY();
-          this.fingerOne = currentY; // 记录当前手指的位置
-          this.fingerTwo = sCurrentY;
+          /* this.fingerOne = currentY; // 记录当前手指的位置
+          this.fingerTwo = sCurrentY; */
         }
+        this.fingerOne = currentY; // 记录当前手指的位置
+        this.fingerTwo = sCurrentY;
       }
     },
     /**
@@ -179,9 +192,11 @@ export default {
      */
     swipeEnd(event) {
       if (this.swipeLock) return;
-      if (this.total >= -this.clientHeight * 0.4) return;
       const len = event.touches.length;
-      if (len === 0) this.returnStartAnimate();
+      if (len === 0) {
+        if (this.total >= -this.clientHeight * 0.5) this.returnTopAnimate();
+        else this.returnStartAnimate();
+      }
     },
     /**
      * 滑动阻力
@@ -189,11 +204,12 @@ export default {
      * @param interval 每次手指滑动与上一个手指之间的间隔
      */
     swipResistance(interval) {
-      if (this.total >= -this.clientHeight * 0.4) return interval;
+      if (this.total >= -this.clientHeight * 0.5) return interval;
       const total = this.clientHeight * 2.5;
       // eslint-disable-next-line no-restricted-properties
       const pow = Math.pow(1 - (total - Math.abs(this.total)) / total, 2);
-      const resistance = pow;
+      let resistance = pow;
+      if (resistance <= 0.4) resistance = 0.4;
       return (interval * resistance) / 4;
     },
     /**
@@ -202,12 +218,29 @@ export default {
     returnStartAnimate() {
       this.returnStartAnimateHandle = anime({
         targets: '#secondKey',
-        translateY: -this.clientHeight * 3,
+        translateY: -this.clientHeight * 2.4,
         delay: 0,
+        duration: 400,
+        easing: 'linear',
+        changeComplete: () => {
+          this.total = -this.clientHeight * 2.4;
+        },
+      });
+    },
+    /**
+     * 返回最顶部
+     */
+    returnTopAnimate() {
+      this.swipeLock = true;
+      anime({
+        targets: '#secondKey',
+        translateY: 0,
         duration: 500,
         easing: 'linear',
         changeComplete: () => {
-          this.total = -this.clientHeight * 3;
+          this.total = 0;
+          this.swipeLock = false;
+          this.slipDownLock = true;
         },
       });
     },
@@ -215,7 +248,7 @@ export default {
      * 划到出现史莱姆开启动画，滑倒顶部
      */
     isNeedToTopAnime() {
-      if (this.total >= -this.clientHeight * 0.4) {
+      if (this.total >= -this.clientHeight * 0.5) {
         if (this.puzzleShow) return;
         this.swipeLock = true;
         anime({
@@ -236,7 +269,7 @@ export default {
      * 划到第一个页面的底部时，触发返回起点的动画
      */
     isNeedToBottom() {
-      if (this.total <= -this.clientHeight * 0.4) {
+      if (this.total <= -this.clientHeight * 0.5) {
         this.returnStartAnimate();
         this.swipeLock = false;
         this.slipDownLock = false;
@@ -291,8 +324,14 @@ export default {
         setTimeout(() => {
           this.shilaimuOpacity = 1;
         }, 1000);
+        setTimeout(() => {
+          this.$refs.secondKeyDialog.playDialogOfSecondKey();
+          this.secondKeyBarshilaimu = !this.secondKeyBarshilaimu;
+        }, 2000);
+      } else {
+        if (!this.secondKeyBarshilaimu) return;
+        this.$refs.secondKeyDialog.playDialogOfSecondKey();
       }
-      this.$refs.secondKeyDialog.playDialogOfSecondKey();
     },
   },
 };
@@ -320,13 +359,22 @@ export default {
 
 .ceil .left, .ceil .right {
   position: absolute;
-  height: 100vh;
+  height: 70vh;
   writing-mode: vertical-rl;
-  text-align-last: justify;
+  text-align: justify;
   letter-spacing: 1px;
-  line-height: 40px;
   font-size: 10px;
 }
+
+.ceil .right {
+  line-height: 30px;
+}
+
+.ceil .left span, .ceil .right span {
+  display:inline-block;
+  height: 70vh;
+}
+
 .ceil .left {
   left: 0;
 }

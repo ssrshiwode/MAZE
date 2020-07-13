@@ -1,14 +1,16 @@
 <template>
   <div id="maze">
-    <div id="openAnimation" v-if="mazeProcess === 'start'">
+    <!-- <img class="bg1" src="@/assets/maze/daiji.gif"> -->
+    <div id="openAnimation" v-show="mazeProcess === 'start'">
       <img src="@/assets/maze/chuchang.gif">
     </div>
 
-    <div id="endAnimation" v-else-if="mazeProcess === 'end'">
+    <div id="endAnimation" v-show="mazeProcess === 'end'">
       <img src="@/assets/maze/baolie.gif">
+      <!-- <img src="@/assets/maze/吃下爆裂.gif"> -->
     </div>
 
-    <div id="puzzle" @touchmove.prevent v-show="mazeProcess === 'going'" @mousewheel.prevent @gesturestart.prevent @gesturechange.prevent @gestureend.prevent>
+    <div id="puzzle" @touchmove.prevent v-show="mazeShow" @mousewheel.prevent @gesturestart.prevent @gesturechange.prevent @gestureend.prevent>
       <transition name="fade">
         <div id="map" :style="mapStyle" @touchmove.prevent v-show="openAnimation">
           <template v-for="(mapDataX, y) in mapData">
@@ -76,7 +78,7 @@ export default {
         /* 11 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
         [/* 0 */{ top: 0, left: 1, right: 1, bottom: 0 }, /* 1 */{ top: 0, left: 1, right: 1, bottom: 0 }, /* 2 */ { top: 0, left: 1, right: 1, bottom: 1, trap: 1 }, /* 3 */ { top: 0, left: 1, right: 1, bottom: 0 }, /* 4 */ { top: 1, left: 1, right: 0, bottom: 1, trap: 1 }, /* 5 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 6 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 7 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 8 */ { top: 0, left: 0, right: 1, bottom: 0, prompt: 'p7' }, /* 9 */ { top: 1, left: 1, right: 0, bottom: 1, trap: 1 }, /* 10 */ { top: 1, left: 0, right: 0, bottom: 0, prompt: 'p10' }, /* 11 */ { top: 1, left: 0, right: 1, bottom: 1, trap: 1 }, /* 12 */ { top: 0, left: 1, right: 1, bottom: 0 }],
         /* 12 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-        [/* 0 */{ top: 0, left: 1, right: 0, bottom: 1 }, /* 1 */{ top: 0, left: 0, right: 0, bottom: 1, prompt: 'p9' }, /* 2 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 3 */ { top: 0, left: 0, right: 0, bottom: 1, prompt: 'p8' }, /* 4 */ { top: 1, left: 0, right: 1, bottom: 1, end: 1 }, /* 5 */ { top: 1, left: 1, right: 0, bottom: 1, trap: 1 }, /* 6 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 7 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 8 */ { top: 0, left: 0, right: 0, bottom: 1, prompt: 'p8' }, /* 9 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 10 */ { top: 0, left: 0, right: 1, bottom: 1, prompt: 'p9' }, /* 11 */ { top: 1, left: 1, right: 0, bottom: 1, trap: 1 }, /* 12 */ { top: 0, left: 0, right: 1, bottom: 1 }],
+        [/* 0 */{ top: 0, left: 1, right: 0, bottom: 1 }, /* 1 */{ top: 0, left: 0, right: 0, bottom: 1, prompt: 'p9' }, /* 2 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 3 */ { top: 0, left: 0, right: 1, bottom: 1, prompt: 'p8', end: 1 }, /* 4 */ { top: 1, left: 0, right: 1, bottom: 1 }, /* 5 */ { top: 1, left: 1, right: 0, bottom: 1, trap: 1 }, /* 6 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 7 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 8 */ { top: 0, left: 0, right: 0, bottom: 1, prompt: 'p8' }, /* 9 */ { top: 1, left: 0, right: 0, bottom: 1 }, /* 10 */ { top: 0, left: 0, right: 1, bottom: 1, prompt: 'p9' }, /* 11 */ { top: 1, left: 1, right: 0, bottom: 1, trap: 1 }, /* 12 */ { top: 0, left: 0, right: 1, bottom: 1 }],
       ],
       clientWidth: 0,
       clientHeight: 0,
@@ -96,6 +98,7 @@ export default {
         width: '0px',
         height: '0px',
         transform: 'rotate(180deg)',
+        opacity: 1,
       },
       player: {
         x: 0,
@@ -122,6 +125,7 @@ export default {
       },
       openAnimation: false,
       mazeProcess: 'start',
+      mazeShow: false,
       timeIntervalHandler: null,
       moveEndTimer: null,
     };
@@ -131,7 +135,7 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this.mazeProcess = 'going';
+      this.mazeShow = true;
       this.$nextTick(() => {
         this.openAnimation = true;
         this.judgePlayerMeetPrompt();
@@ -165,8 +169,9 @@ export default {
         height: `${this.clientWidth}px`,
       };
       this.daijiStyle = {
-        width: `${0.17 * this.clientWidth}px`,
-        height: `${0.17 * this.clientWidth}px`,
+        width: `${0.18 * this.clientWidth}px`,
+        height: `${0.18 * this.clientWidth}px`,
+        transform: 'rotate(180deg)',
       };
     },
     // 事件防抖
@@ -209,7 +214,6 @@ export default {
               this.moveStation = 'moved';
               this.judgePlayerMeetPrompt();
               this.judgePlayerMeetTrap();
-              this.judgePlayerMeetEnd();
             },
           });
           break;
@@ -228,7 +232,6 @@ export default {
               this.moveStation = 'moved';
               this.judgePlayerMeetPrompt();
               this.judgePlayerMeetTrap();
-              this.judgePlayerMeetEnd();
             },
           });
           break;
@@ -247,7 +250,6 @@ export default {
               this.moveStation = 'moved';
               this.judgePlayerMeetPrompt();
               this.judgePlayerMeetTrap();
-              this.judgePlayerMeetEnd();
             },
           });
           break;
@@ -266,7 +268,6 @@ export default {
               this.moveStation = 'moved';
               this.judgePlayerMeetPrompt();
               this.judgePlayerMeetTrap();
-              this.judgePlayerMeetEnd();
             },
           });
           break;
@@ -279,16 +280,16 @@ export default {
       if (this.moveStation === 'moving') return;
       switch (action) {
         case 'up':
-          this.daijiStyle.transform = 'rotate(90deg)';
+          this.daijiStyle.transform = 'rotate(270deg)';
           break;
         case 'left':
-          this.daijiStyle.transform = 'rotate(0deg)';
-          break;
-        case 'right':
           this.daijiStyle.transform = 'rotate(180deg)';
           break;
+        case 'right':
+          this.daijiStyle.transform = 'rotate(0deg)';
+          break;
         case 'down':
-          this.daijiStyle.transform = 'rotate(270deg)';
+          this.daijiStyle.transform = 'rotate(90deg)';
           break;
         default:
           break;
@@ -306,6 +307,7 @@ export default {
           result = playerPosition.left;
           break;
         case 'right':
+          this.judgePlayerMeetEnd();
           result = playerPosition.right;
           break;
         case 'down':
@@ -338,6 +340,7 @@ export default {
         const p = playerPosition.prompt;
         this.promptShow[p] = !this.promptShow[p];
         this.promptShow.exclamation = true;
+        if (p === 'p1') this.promptShow.exclamation = false;
       }
     },
     // 吃豆人开始移动，立刻隐藏提示框
@@ -360,10 +363,19 @@ export default {
     judgePlayerMeetEnd() {
       const playerPosition = this.mapData[Math.abs(this.player.y / this.moveValue)][Math.abs(this.player.x / this.moveValue)];
       if (playerPosition.end) {
+        this.hidePrompt();
+        this.player.x -= this.clientWidth;
+        anime({
+          targets: '#map',
+          translateX: this.player.x,
+          easing: 'linear',
+          duration: 0,
+        });
         this.mazeProcess = 'end';
+        this.daijiStyle.opacity = 0;
         setTimeout(() => {
           this.$router.replace({ name: 'ThirdKey' });
-        }, 6200);
+        }, 9000);
       }
     },
   },
@@ -372,33 +384,44 @@ export default {
 
 <style scoped>
 #maze {
-  background: #0f0f0f;
   min-width: 100vw;
   min-height: 100vh;
 }
 
+/* .bg1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 18vw;
+  height: 18vw;
+} */
+
 #openAnimation, #endAnimation {
+  position: absolute;
   width: 100vw;
   height: 100vh;
-  background: #0f0f0f;
 }
 
 #openAnimation img {
   position: fixed;
-  width: 200vw;
-  left: -56vw;
-  bottom: calc(50vh - 50vw*0.17);
+  width: 200.7vw;
+  left: -56.1vw;
+  bottom: calc(50vh - 9vw);
 }
 
 #endAnimation img {
   position: fixed;
-  width: 100vw;
-  left: -25vw;
-  bottom: calc(50vh - 50vw*0.17);
+  width: 126.5vw;
+  left: -42.2vw;
+  bottom: calc(50vh - 24.43vw);
+  z-index: 997;
 }
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 2s;
+  transition: opacity 4s;
 }
 
 .fade-enter, .fade-leave-to {
