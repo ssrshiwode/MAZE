@@ -1,6 +1,6 @@
 <template>
   <div id="thirdKey">
-    <key-bar ref="keyBar" class="key-bar" key-cabinet="thirdKey"></key-bar>
+    <key-bar ref="keyBar" class="key-bar" key-cabinet="thirdKey" :first-key-browse="firstKeyBrowse"></key-bar>
     <img class="shilaimu" :style="{opacity:shilaimuOpacity}" src="@/assets/thirdKey/huang-you.gif">
     <img class="shadow" :style="{opacity:shilaimuOpacity}" src="@/assets/thirdKey/shadow.png">
     <dialog-box ref="thirdKeyDialog" class="dialog" dialog-id="thirdKey" @touchstart.native="playDialogOfThirdKey"></dialog-box>
@@ -19,6 +19,19 @@ export default {
       shilaimuOpacity: 0,
       thirdKeyBarInit: false,
       thirdKeyBarshilaimu: false,
+      debounceTimer: null,
+      firstKeyBrowse: '',
+    };
+  },
+  created() {
+    // eslint-disable-next-line no-unused-expressions
+    document.cookie.includes('keyone_history=Browsed') ? this.firstKeyBrowse = 'Browsed' : this.firstKeyBrowse = 'UnBrowse';
+    // eslint-disable-next-line func-names
+    window.onscroll = function () {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 500);
     };
   },
   methods: {

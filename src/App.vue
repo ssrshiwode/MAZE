@@ -7,6 +7,9 @@
 <script>
 export default {
   name: 'App',
+  created() {
+    if (window.screen.width > 767) window.location.replace('https://resource.itaotuo.com/website/activity/pc.html');
+  },
 };
 </script>
 

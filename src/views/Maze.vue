@@ -1,13 +1,11 @@
 <template>
   <div id="maze">
-    <!-- <img class="bg1" src="@/assets/maze/daiji.gif"> -->
-    <div id="openAnimation" v-show="mazeProcess === 'start'">
-      <img src="@/assets/maze/chuchang.gif">
+    <div id="openAnimation" v-show="mazeProcess === 'start'" :style="{ height: vhStyle.openendAnimationheight }">
+      <img src="@/assets/maze/chuchang.gif" :style="{ bottom: vhStyle.openAnimationimgbottom}">
     </div>
 
-    <div id="endAnimation" v-show="mazeProcess === 'end'">
-      <img src="@/assets/maze/baolie.gif">
-      <!-- <img src="@/assets/maze/吃下爆裂.gif"> -->
+    <div id="endAnimation" v-show="mazeProcess === 'end'" :style="{ height: vhStyle.openendAnimationheight }">
+      <img src="@/assets/maze/baolie.gif" :style="{ bottom: vhStyle.endAnimationimgbottom}">
     </div>
 
     <div id="puzzle" @touchmove.prevent v-show="mazeShow" @mousewheel.prevent @gesturestart.prevent @gesturechange.prevent @gestureend.prevent>
@@ -18,24 +16,24 @@
           </template>
         </div>
       </transition>
-      <div id="player">
-        <img class="p1" src="@/assets/maze/p1.png" v-show="promptShow.p1">
-        <img class="p2" src="@/assets/maze/p2.png" v-show="promptShow.p2">
-        <img class="p3" src="@/assets/maze/p3.png" v-show="promptShow.p3">
-        <img class="p4" src="@/assets/maze/p4.png" v-show="promptShow.p4">
-        <img class="p5" src="@/assets/maze/p5.png" v-show="promptShow.p5">
-        <img class="p6" src="@/assets/maze/p6.png" v-show="promptShow.p6">
-        <img class="p7" src="@/assets/maze/p7.png" v-show="promptShow.p7">
-        <img class="p8" src="@/assets/maze/p8.png" v-show="promptShow.p8">
-        <img class="p9" src="@/assets/maze/p9.png" v-show="promptShow.p9">
-        <img class="p10" src="@/assets/maze/p10.png" v-show="promptShow.p10">
-        <img class="exclamation" src="@/assets/maze/exmark.png" v-show="promptShow.exclamation">
+      <div id="player" :style="{ height: vhStyle.playerheight}">
+        <img class="p1" src="@/assets/maze/p1.png" v-show="promptShow.p1" :style="{ top: vhStyle.p1top10top}">
+        <img class="p2" src="@/assets/maze/p2.png" v-show="promptShow.p2" :style="{ top: vhStyle.p1top10top}">
+        <img class="p3" src="@/assets/maze/p3.png" v-show="promptShow.p3" :style="{ top: vhStyle.p1top10top}">
+        <img class="p4" src="@/assets/maze/p4.png" v-show="promptShow.p4" :style="{ top: vhStyle.p1top10top}">
+        <img class="p5" src="@/assets/maze/p5.png" v-show="promptShow.p5" :style="{ top: vhStyle.p1top10top}">
+        <img class="p6" src="@/assets/maze/p6.png" v-show="promptShow.p6" :style="{ top: vhStyle.p1top10top}">
+        <img class="p7" src="@/assets/maze/p7.png" v-show="promptShow.p7" :style="{ top: vhStyle.p1top10top}">
+        <img class="p8" src="@/assets/maze/p8.png" v-show="promptShow.p8" :style="{ top: vhStyle.p1top10top}">
+        <img class="p9" src="@/assets/maze/p9.png" v-show="promptShow.p9" :style="{ top: vhStyle.p1top10top}">
+        <img class="p10" src="@/assets/maze/p10.png" v-show="promptShow.p10" :style="{ top: vhStyle.p1top10top}">
+        <img class="exclamation" src="@/assets/maze/exmark.png" v-show="promptShow.exclamation" :style="{ top: vhStyle.exclamationtop}">
         <img class="daiji" src="@/assets/maze/daiji.gif" :style="daijiStyle">
-        <div class="container">
-          <div class="up" @touchstart.prevent="debounceMove('up')" @touchend.prevent="moveEnd" />
-          <div class="right" @touchstart.prevent="debounceMove('right')" @touchend.prevent="moveEnd" />
-          <div class="left" @touchstart.prevent="debounceMove('left')" @touchend.prevent="moveEnd" />
-          <div class="down" @touchstart.prevent="debounceMove('down')" @touchend.prevent="moveEnd" />
+        <div class="container" :style="containerStyle">
+          <div class="up" @touchstart.prevent="debounceMove('up')" :style="{ width: vhStyle.updownleftrightwidth, height: vhStyle.updownleftrightheight}" @touchend.prevent="moveEnd" />
+          <div class="right" @touchstart.prevent="debounceMove('right')" :style="{ width: vhStyle.updownleftrightwidth, height: vhStyle.updownleftrightheight}" @touchend.prevent="moveEnd" />
+          <div class="left" @touchstart.prevent="debounceMove('left')" :style="{ width: vhStyle.updownleftrightwidth, height: vhStyle.updownleftrightheight}" @touchend.prevent="moveEnd" />
+          <div class="down" @touchstart.prevent="debounceMove('down')" :style="{ width: vhStyle.updownleftrightwidth, height: vhStyle.updownleftrightheight}" @touchend.prevent="moveEnd" />
         </div>
       </div>
     </div>
@@ -89,6 +87,8 @@ export default {
         height: '0px',
         transform: 'translateX(0) translateY(0)',
         'background-image': '',
+        'border-top': '',
+        'border-bottom': '',
       },
       ceilStyle: {
         width: '0px',
@@ -97,6 +97,8 @@ export default {
       daijiStyle: {
         width: '0px',
         height: '0px',
+        top: '0px',
+        left: '0px',
         transform: 'rotate(180deg)',
         opacity: 1,
       },
@@ -128,10 +130,33 @@ export default {
       mazeShow: false,
       timeIntervalHandler: null,
       moveEndTimer: null,
+      vhStyle: {
+        openendAnimationheight: '0px',
+        openAnimationimgbottom: '0px',
+        endAnimationimgbottom: '0px',
+        playerheight: '0px',
+        updownleftrightwidth: '0px',
+        updownleftrightheight: '0px',
+        p1top10top: '0px',
+        exclamationtop: '0px',
+      },
+      containerStyle: {
+        width: '0px',
+        height: '0px',
+        top: '0px',
+        left: '0px',
+      },
     };
   },
   created() {
     this.init();
+    // eslint-disable-next-line func-names
+    window.onscroll = function () {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 500);
+    };
   },
   mounted() {
     setTimeout(() => {
@@ -149,17 +174,21 @@ export default {
     // 初始化所有参数
     init() {
       this.clientWidth = window.screen.width;
-      this.clientHeight = window.screen.height;
+      this.clientHeight = window.innerHeight;
       this.start = {
         x: -this.clientWidth * 6,
         y: -this.clientWidth * 2,
       };
-      this.mapStyle.transform = `translateX(${this.start.x}px) translateY(${this.start.y}px)`;
       this.offset = (this.clientHeight - this.clientWidth) / 2;
       this.moveValue = this.clientWidth;
-      this.mapStyle.width = `${this.clientWidth * 13}px`;
-      this.mapStyle.height = `${this.clientWidth * 13}px`;
-      this.mapStyle['background-image'] = `url(${background})`;
+      this.mapStyle = {
+        width: `${this.clientWidth * 13}px`,
+        height: `${this.clientWidth * 13}px`,
+        transform: `translateX(${this.start.x}px) translateY(${this.start.y}px)`,
+        'background-image': `url(${background})`,
+        'border-top': `${(this.clientHeight - this.clientWidth) / 2}px solid black`,
+        'border-bottom': `${(this.clientHeight - this.clientWidth) / 2}px solid black`,
+      };
       this.player = {
         x: -this.clientWidth * 6,
         y: -this.clientWidth * 2,
@@ -171,7 +200,26 @@ export default {
       this.daijiStyle = {
         width: `${0.18 * this.clientWidth}px`,
         height: `${0.18 * this.clientWidth}px`,
+        top: `${this.clientHeight * 0.5 - this.clientWidth * 0.09}px`,
+        left: `${this.clientWidth * 0.41}px`,
         transform: 'rotate(180deg)',
+        opacity: 1,
+      };
+      this.containerStyle = {
+        width: `${this.clientHeight * 2}px`,
+        height: `${this.clientHeight * 2}px`,
+        top: `-${this.clientHeight / 2}px`,
+        left: `${this.clientWidth / 2 - this.clientHeight}px`,
+      };
+      this.vhStyle = {
+        openendAnimationheight: `${this.clientHeight}px`,
+        openAnimationimgbottom: `${this.clientHeight * 0.5 - this.clientWidth * 0.09}px`,
+        endAnimationimgbottom: `${this.clientHeight * 0.5 - this.clientWidth * 0.2443}px`,
+        playerheight: `${this.clientHeight}px`,
+        updownleftrightwidth: `${this.clientHeight}px`,
+        updownleftrightheight: `${this.clientHeight}px`,
+        p1top10top: `${this.clientHeight * 0.18}px`,
+        exclamationtop: `${this.clientHeight * 0.38}px`,
       };
     },
     // 事件防抖
@@ -402,21 +450,21 @@ export default {
 #openAnimation, #endAnimation {
   position: absolute;
   width: 100vw;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 #openAnimation img {
   position: fixed;
   width: 200.7vw;
   left: -56.1vw;
-  bottom: calc(50vh - 9vw);
+  /* bottom: calc(50vh - 9vw); */
 }
 
 #endAnimation img {
   position: fixed;
   width: 126.5vw;
   left: -42.2vw;
-  bottom: calc(50vh - 24.43vw);
+  /* bottom: calc(50vh - 24.43vw); */
   z-index: 997;
 }
 
@@ -429,8 +477,8 @@ export default {
 }
 
 #map {
-  border-top: calc((100vh - 100vw) /2 ) solid #0f0f0f;
-  border-bottom: calc((100vh - 100vw) /2 ) solid #0f0f0f;
+  /* border-top: calc((100vh - 100vw) /2 ) solid black;
+  border-bottom: calc((100vh - 100vw) /2 ) solid black; */
   transform: translateX(0px) translateY(0px);
   background-repeat: no-repeat;
   background-size: cover;
@@ -448,7 +496,7 @@ export default {
   right: 0;
   bottom: 0;
   width: 100vw;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 .daiji, .container {
@@ -456,32 +504,32 @@ export default {
   z-index: 999;
 }
 
-.daiji {
+/* .daiji {
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   margin: auto;
-}
+} */
 
 .container {
-  width: 200vh;
+  /* width: 200vh;
   height: 200vh;
   top: -50vh;
-  left: calc(50vw - 100vh);
+  left: calc(50vw - 100vh); */
   transform: rotate(45deg);
 }
 
 .up, .down, .left, .right {
-  width: 100vh;
-  height: 100vh;
+  /* width: 100vh;
+  height: 100vh; */
   float: left;
 }
 
 .p1, .p2, .p3, .p4, .p5, .p6, .p7, .p8, .p9, .p10 {
   width: 47vw;
   position: fixed;
-  top: 18vh;
+  /* top: 18vh; */
   left: 0;
   right: 0;
   margin: 0 auto;
@@ -491,7 +539,7 @@ export default {
 .exclamation {
   width: 2.7vw;
   position: fixed;
-  top: 38vh;
+  /* top: 38vh; */
   left: 0;
   right: 0;
   margin: 0 auto;

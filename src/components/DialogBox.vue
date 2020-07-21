@@ -20,7 +20,7 @@ const timeInterval = 100;
 
 export default {
   name: 'DialogBox',
-  props: ['dialogId', 'backgroundImg', 'firstKeyBrowse'],
+  props: ['dialogId', 'backgroundImg'],
   data() {
     return {
       items: [],
@@ -41,7 +41,7 @@ export default {
           loop: 'tow-three',
         },
         thirdKey: {
-          contents: ['获得了物品：第三把钥匙', '你太厉害了！赢得了第三把钥匙！', '不过，光集齐钥匙是不够的，你还得找到能使用它们的地方。', '我这里也有重要的消息要告诉你，记住了哦！', 'F12F12F12F12F12···'],
+          contents: ['获得了物品：第三把钥匙', '你太厉害了！赢得了第三把钥匙！', '不过，光集齐钥匙是不够的，还得找到能使用它们的地方。', '我这里也有重要的消息要告诉你，记住了哦！', 'F12F12F12F12F12···'],
           loop: 'three-four',
         },
       },
@@ -70,7 +70,6 @@ export default {
         this.playDialogOfFirstKey();
         break;
       case 'secondKeyDialog':
-        if (this.firstKeyBrowse === 'UnBrowse') this.text.secondKeyDialog.contents = ['想不到这都被你发现了，你好厉害！', '我这里有一个很重要的信息要告诉你，要记住哦！', '网首页网首页网首页网首页网首页···'];
         this.playDialogOfSecondKey();
         break;
       case 'puzzle':
@@ -100,10 +99,7 @@ export default {
     },
     playDialogOfSecondKey() {
       if (this.process !== this.contents.length - 1) this.process += 1;
-      else {
-        // eslint-disable-next-line no-unused-expressions
-        this.firstKeyBrowse === 'UnBrowse' ? this.process = 1 : this.process = 2;
-      }
+      else this.process = 2;
       if (this.intervaler) clearInterval(this.intervaler);
       this.i = 0;
       this.items = [];

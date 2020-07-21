@@ -20,7 +20,7 @@ import alertImg from '@/assets/keyBar/alert.png';
 
 export default {
   name: 'KeyBar',
-  props: ['keyCabinet', 'firstKeyBrowse'],
+  props: ['keyCabinet', 'firstKeyBrowse', 'secondKeyBrowse'],
   data() {
     return {
       alert: {
@@ -40,14 +40,16 @@ export default {
   created() {
     switch (this.keyCabinet) {
       case 'firstKey':
-        this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }];
+        if (this.secondKeyBrowse === 'Browsed') this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }, { keyName: 'secondKey', img: secondKey, content: '第二把钥匙' }];
+        else this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }];
         break;
       case 'secondKey':
         if (this.firstKeyBrowse === 'Browsed') this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }, { keyName: 'secondKey', img: secondKey, content: '第二把钥匙' }];
-        else this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }];
+        else this.keyArray = [{ keyName: 'secondKey', img: secondKey, content: '第二把钥匙' }];
         break;
       case 'thirdKey':
-        this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }, { keyName: 'secondKey', img: secondKey, content: '第一把钥匙' }, { keyName: 'thirdKey', img: thirdKey, content: '第三把钥匙' }];
+        if (this.firstKeyBrowse === 'Browsed') this.keyArray = [{ keyName: 'firstKey', img: firstKey, content: '第一把钥匙' }, { keyName: 'secondKey', img: secondKey, content: '第二把钥匙' }, { keyName: 'thirdKey', img: thirdKey, content: '第三把钥匙' }];
+        else this.keyArray = [{ keyName: 'secondKey', img: secondKey, content: '第二把钥匙' }, { keyName: 'thirdKey', img: thirdKey, content: '第三把钥匙' }];
         break;
       default:
         break;

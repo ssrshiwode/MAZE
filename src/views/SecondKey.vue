@@ -21,7 +21,7 @@
       <key-bar ref="keyBar" class="key-bar" key-cabinet="secondKey" :first-key-browse="firstKeyBrowse"></key-bar>
       <img class="shilaimu" :style="{opacity:shilaimuOpacity}" src="@/assets/secondKey/lan-shang.gif">
       <img class="shadow" :style="{opacity:shilaimuOpacity}" src="@/assets/secondKey/shadow.png">
-      <dialog-box ref="secondKeyDialog" class="dialog" dialog-id="secondKeyDialog" :first-key-browse="firstKeyBrowse" @touchstart.native="playDialogOfSecondKey"></dialog-box>
+      <dialog-box ref="secondKeyDialog" class="dialog" dialog-id="secondKeyDialog" @touchstart.native="playDialogOfSecondKey"></dialog-box>
     </div>
     <template v-for="(img, index) in preloadImgs">
       <img :src="img" v-show="false" :key="index">
@@ -82,6 +82,7 @@ export default {
       slidUpLock: true, // 页面上移锁
       swipeLock: false, // 页面滑动锁,
       firstKeyBrowse: '',
+      randomIndex: -1,
     };
   },
   created() {
@@ -95,7 +96,7 @@ export default {
      * 初始化参数
      */
     init() {
-      document.domain = 'omescape.net';
+      if (document.domain === 'twokeys.omescape.net') document.domain = 'omescape.net';
       // eslint-disable-next-line no-unused-expressions
       document.cookie.includes('keyone_history=Browsed') ? this.firstKeyBrowse = 'Browsed' : this.firstKeyBrowse = 'UnBrowse';
       this.clientWidth = window.screen.width;
@@ -301,8 +302,15 @@ export default {
      * 初始化谜题
      */
     initPuzzle() {
-      const randomIndex = Math.floor(Math.random() * 4);
-      this.puzzle.answer = this.puzzleAnswers[randomIndex];
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const creatRandomIndex = Math.floor(Math.random() * 4);
+        if (creatRandomIndex !== this.randomIndex) {
+          this.randomIndex = creatRandomIndex;
+          break;
+        }
+      }
+      this.puzzle.answer = this.puzzleAnswers[this.randomIndex];
       this.puzzlePath = this.puzzleImgs[this.puzzle.answer];
     },
     /**
